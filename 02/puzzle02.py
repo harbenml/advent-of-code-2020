@@ -1,7 +1,7 @@
 with open("data02.txt") as f:
     lines = f.readlines()
 
-# emove whitespace characters like `\n` at the end of each line
+# remove whitespace characters like `\n` at the end of each line
 lines = [x.strip() for x in lines]
 
 # part one
