@@ -1,4 +1,4 @@
-with open("data02.txt") as f:
+with open("./data/data02.txt") as f:
     lines = f.readlines()
 
 # remove whitespace characters like `\n` at the end of each line

@@ -1,6 +1,6 @@
 import pandas as pd
 
-data = pd.read_csv("data01.txt").values
+data = pd.read_csv("./data/data01.txt").values
 
 # part one
 for i in range(len(data)):
