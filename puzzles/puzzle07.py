@@ -50,7 +50,7 @@ def count_bags_inside(d: dict, bag) -> int:
 
 if __name__ == "__main__":
 
-    filename = "./data/test_data07_2.txt"
+    filename = "./data/data07.txt"
 
     X = load_data(filename)
     d = parse_input(X)
