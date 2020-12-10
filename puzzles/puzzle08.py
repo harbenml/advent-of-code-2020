@@ -30,9 +30,10 @@ def do_nothing(value: int):
     idx += 1
 
 
-def follow_instructions(X: list) -> int:
+def follow_instructions(X: list) -> Tuple[int, bool]:
     global acc
     global idx
+    acc = idx = 0
     ops = {"acc": accumulator, "jmp": jumper, "nop": do_nothing}
     is_applied = [False] * len(X)
     is_success = False
@@ -69,7 +70,7 @@ def permute_x_until_success(X: list) -> int:
 
 
 if __name__ == "__main__":
-    X = load_data("./data/data08.txt")
+    X = load_data("./data/test_data08_2.txt")
     acc, success = follow_instructions(X)
     print(acc, success)
 
