@@ -1,2 +1,2 @@
-# Advent_of_Code_2020
-Puzzle solutions to the advent of code 2020
+# Advent of Code 2020
+Solutions to the advent of code 2020 puzzles.
