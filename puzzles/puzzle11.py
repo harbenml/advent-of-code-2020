@@ -10,10 +10,10 @@ def check_single_seat(value: "str") -> int:
     return 0
 
 
-def check_adjacent_seats(X: list, row: int, col: int) -> str:
+def check_adjacent_seats(X: list, row: int, col: int) -> int:
     nrows, ncols = len(X), len(X[0])
     if X[row][col] == ".":
-        return "."
+        return 0
     occupied = 0
     for i in range(max(row - 1, 0), min(nrows, row + 2)):
         for j in range(max(col - 1, 0), min(ncols, col + 2)):
@@ -24,7 +24,7 @@ def check_adjacent_seats(X: list, row: int, col: int) -> str:
 
 def check_visible_seats(X: list, row: int, col: int) -> int:
     if X[row][col] == ".":
-        return "."
+        return 0
     occupied = 0
     occupied += check_horizontal(X, row, col)
     occupied += check_vertical(X, row, col)
@@ -128,7 +128,7 @@ def run_algorithm(
     return X_new, count_all_occupied
 
 
-def solve(X: list, fun: Callable, num_seats_to_check: int) -> None:
+def solve(X: list, fun: Callable, num_seats_to_check: int) -> Tuple[list, int]:
     occupied_seats = [0]
     for _ in range(100):
         X, count = run_algorithm(X, fun, num_seats_to_check)
