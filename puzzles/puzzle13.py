@@ -21,7 +21,7 @@ def solve_part_1(bus_ids: list, departure: int) -> int:
 def solve_part_2(bus_ids: list, departure: int, delays: list) -> int:
     delta_time = 1
     timestamp = 0
-    for bus, delay in list(zip(bus_ids, delays)):
+    for bus, delay in zip(bus_ids, delays):
         while (timestamp + delay) % bus != 0:
             timestamp += delta_time
         delta_time *= bus
