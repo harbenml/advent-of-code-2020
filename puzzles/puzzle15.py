@@ -36,6 +36,8 @@ def solve(sequence: List[int], n: int) -> int:
 
 
 if __name__ == "__main__":
+
+    # puzzle input
     sequence = [9, 12, 1, 4, 17, 0, 18]
 
     # solution of part 1
@@ -43,14 +45,3 @@ if __name__ == "__main__":
 
     # solution of part 2
     print(solve(sequence, 30000000))
-
-"""
-0 3 6
-0 3 6 0
-0 3 6 0 3
-0 3 6 0 3 3
-0 3 6 0 3 3 1
-0 3 6 0 3 3 1 0
-0 3 6 0 3 3 1 0 4
-0 3 6 0 3 3 1 0 4 0
-"""

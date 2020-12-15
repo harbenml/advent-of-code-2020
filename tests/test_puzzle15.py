@@ -1,6 +1,5 @@
 from puzzles.puzzle15 import solve
 
-# from puzzles.puzzle15 import solve_part_2
 import pytest
 
 
