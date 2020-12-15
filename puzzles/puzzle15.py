@@ -38,7 +38,10 @@ def solve(sequence: List[int], n: int) -> int:
 if __name__ == "__main__":
     sequence = [9, 12, 1, 4, 17, 0, 18]
 
+    # solution of part 1
     print(solve(sequence, 2020))
+
+    # solution of part 2
     print(solve(sequence, 30000000))
 
 """
