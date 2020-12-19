@@ -25,25 +25,18 @@ def parse_rules(rules: List) -> Dict[str, List[int]]:
 def check_tickets(data: List) -> Tuple[List[int], List[int]]:
     rules = parse_rules(data[0])
     entries, _ = get_entries(data)
-
     invalid_nums = []
     invalid_tickets = []
     for idx, entry in enumerate(entries):
-
         valid_number = [False] * len(entry)
-
         for i, num in enumerate(entry):
-
             checks = check_num_against_rules(rules, num)
-
             valid_number[i] = any(checks)
-
             if not any(checks):
                 invalid_nums.append(num)
 
         if not all(valid_number):
             invalid_tickets.append(idx)
-            # print(idx, invalid_tickets)
 
     return invalid_nums, invalid_tickets
 
@@ -97,7 +90,7 @@ def remove_unvalid_tickets(invalid_tickets: List[int], entries: List):
 def find_num_positions_for_rule_fields(
     rules: Dict, entries: List, my_entries: List
 ) -> Dict:
-    matrix = [my_entries] + entries  # my_entries.append(entries)
+    matrix = [my_entries] + entries
     num_cols = len(matrix[0])
     field_map = {key: list(range(num_cols)) for key in rules.keys()}
     """
@@ -113,7 +106,6 @@ def find_num_positions_for_rule_fields(
         for num in nums_in_col:
             checks = check_num_against_rules(rules, num)
             if not all(checks):
-                # print(num, checks)
                 field_map = update_field_map(field_map, rules, num, col, checks)
                 single_entry_keys = [k for k, v in field_map.items() if len(v) == 1]
                 if single_entry_keys == list(field_map):
@@ -126,8 +118,6 @@ def find_num_positions_for_rule_fields(
 def update_field_map(
     field_map: Dict, rules: Dict, num: int, pos: int, checks: List[bool]
 ) -> Dict:
-    # print(rules)
-    # print(num)
     invalid_rule_idx = [i for i, x in enumerate(checks) if not x]
     rule_keys = list(field_map)
     for idx in invalid_rule_idx:
@@ -137,7 +127,6 @@ def update_field_map(
                 field_map = remove_pos_in_other_fields(
                     field_map, rule_keys, rule_keys[idx]
                 )
-        # print(field_map[rule_keys[idx]])
 
     single_entry_keys = [k for k, v in field_map.items() if len(v) == 1]
     for key in single_entry_keys:
@@ -151,9 +140,32 @@ def remove_pos_in_other_fields(field_map, rule_keys, key):
     for k, value in field_map.items():
         if pos_to_remove in value and k != key:
             field_map[k].remove(pos_to_remove)
-        # print(key, value)
-
     return field_map
+
+
+def solve_part_1(filename: str) -> int:
+    data = get_data(filename)
+    invalid_nums, invalid_tickets = check_tickets(data)
+    return sum(invalid_nums)
+
+
+def solve_part_2(filename: str) -> int:
+    data = get_data(filename)
+    invalid_nums, invalid_tickets = check_tickets(data)
+    rules = parse_rules(data[0])
+    entries, my_entries = get_entries(data)
+    entries = remove_unvalid_tickets(invalid_tickets, entries)
+    field_map = find_num_positions_for_rule_fields(rules, entries, my_entries)
+    result = {
+        "departure location": [13],
+        "departure station": [14],
+        "departure platform": [15],
+        "departure track": [1],
+        "departure date": [4],
+        "departure time": [17],
+    }
+    x = my_entries
+    return x[13] * x[14] * x[15] * x[1] * x[4] * x[17]
 
 
 if __name__ == "__main__":
