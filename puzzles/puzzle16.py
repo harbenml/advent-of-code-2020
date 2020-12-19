@@ -170,24 +170,5 @@ def solve_part_2(filename: str) -> int:
 
 if __name__ == "__main__":
     filename = "./data/data16.txt"
-    data = get_data(filename)
-
-    invalid_nums, invalid_tickets = check_tickets(data)
-
-    rules = parse_rules(data[0])
-    entries, my_entries = get_entries(data)
-    entries = remove_unvalid_tickets(invalid_tickets, entries)
-    field_map = find_num_positions_for_rule_fields(rules, entries, my_entries)
-    print(sum(invalid_nums))
-    print(field_map)
-
-    result = {
-        "departure location": [13],
-        "departure station": [14],
-        "departure platform": [15],
-        "departure track": [1],
-        "departure date": [4],
-        "departure time": [17],
-    }
-    x = my_entries
-    ans = x[13] * x[14] * x[15] * x[1] * x[4] * x[17]
+    print(solve_part_1(filename))
+    print(solve_part_2(filename))
