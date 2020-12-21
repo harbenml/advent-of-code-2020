@@ -51,27 +51,29 @@ def check_code(code: str, rules: Dict[int, List]) -> bool:
             queue.append((code[1:], rules_to_check))
         elif isinstance(current_rules, list):
             for rule in current_rules:
+                if isinstance(rule, int):
+                    rule = [rule]
                 queue.append((code, rule + rules_to_check))
     return False
 
 
-filename = "./data/data19.txt"
-rules, codes = get_rules(filename)
+if __name__ == "__main__":
 
+    filename = "./data/test_data19_2.txt"
+    rules, codes = get_rules(filename)
 
-num_valid_codes = 0
-for i, code in enumerate(codes):
-    num_valid_codes += check_code(code, rules)
+    num_valid_codes = 0
+    for code in codes:
+        num_valid_codes += check_code(code, rules)
 
-print("solution part 1:", num_valid_codes)
+    print("solution part 1:", num_valid_codes)
 
+    rules[8] = [[42], [42, 8]]
+    rules[11] = [[42, 31], [42, 11, 31]]
 
-rules[8] = [[42], [42, 8]]
-rules[11] = [[42, 31], [42, 11, 31]]
+    num_valid_codes = 0
+    for code in codes:
+        num_valid_codes += check_code(code, rules)
 
-num_valid_codes = 0
-for i, code in enumerate(codes):
-    num_valid_codes += check_code(code, rules)
-
-print("solution part 2:", num_valid_codes)
+    print("solution part 2:", num_valid_codes)
 
