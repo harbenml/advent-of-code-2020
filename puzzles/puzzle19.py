@@ -59,7 +59,7 @@ def check_code(code: str, rules: Dict[int, List]) -> bool:
 
 if __name__ == "__main__":
 
-    filename = "./data/test_data19_2.txt"
+    filename = "./data/data19.txt"
     rules, codes = get_rules(filename)
 
     num_valid_codes = 0
