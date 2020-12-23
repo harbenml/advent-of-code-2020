@@ -226,6 +226,14 @@ def put_tile_in_image(img: np.array, tile: Tile, row: int, col: int) -> np.array
     return img
 
 
+def get_monster_mask() -> np.array:
+    with open("./data/data20_monster.txt") as f:
+        monster = f.read().split("\n")
+    mask = [[True if el == "#" else False for el in m] for m in monster]
+    mask = np.array(mask, dtype=bool)
+    return mask
+
+
 def solve_part1(tiles: Dict[int, Tile]) -> int:
     result = 1
     corner = find_corner(tiles)
@@ -237,13 +245,22 @@ def solve_part1(tiles: Dict[int, Tile]) -> int:
 
 if __name__ == "__main__":
 
-    fn = "./data/data20.txt"
+    fn = "./data/test_data20.txt"
     tiles = get_data(fn)
 
-    result = solve_part1(tiles)
-    print("solution of part 1:", result)
+    # result = solve_part1(tiles)
+    # print("solution of part 1:", result)
 
     img = create_image(tiles)
+
+    mask = get_monster_mask()
+
+    # manipulate test image such that the monster is "visible"
+    img = np.rot90(img)
+    img = np.flipud(img)
+    x = img[2:5, 2:22]
+    xm = np.ma.masked_array(x, mask)
+    print("is monster?:", sum(xm[xm.mask].data) == sum(mask[mask]))
 
     fig = px.imshow(img)
     fig.show()
