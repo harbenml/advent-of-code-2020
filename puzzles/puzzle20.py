@@ -1,13 +1,17 @@
+import re
+import copy
+
 from typing import Any
 from typing import Dict
 from typing import Generator
 from typing import List
 from typing import Tuple
+from typing import Union
 
 import numpy as np  # type: ignore
 from numpy import nan  # type: ignore
 
-import re
+import plotly.express as px  # type: ignore
 
 
 class Tile(object):
@@ -45,6 +49,14 @@ class Tile(object):
             return True
         return False
 
+    def check_down_edge(self, t: Any):
+        edge = self.pixels[-1, :]
+        if np.all(edge == t.pixels[0, :]):
+            self.matches[2] = t.id
+            t.matches[0] = self.id
+            return True
+        return False
+
     def get_num_matches(self) -> int:
         return 4 - sum(np.isnan(self.matches))
 
@@ -72,6 +84,30 @@ def find_next_right_match(current_tile: Tile, tiles: Dict[int, Tile]):
                     t.flipud()
                     t.rotate()
     return current_tile, is_match
+
+
+def get_next_tile(
+    current_tile: Tile, tiles: Dict[int, Tile], check_down_instead_of_right: int = False
+) -> Union[Tile, None]:
+    tiles_dict = copy.deepcopy(tiles)
+    for t in tiles_dict.values():
+        if t.id == current_tile.id:
+            continue
+        t.flipud()
+        for _ in range(4):  # rotation counter
+            for flip in [False, True]:
+                if check_down_instead_of_right:
+                    is_match = current_tile.check_down_edge(t)
+                else:
+                    is_match = current_tile.check_right_edge(t)
+                if is_match:
+                    return t
+                if flip:
+                    t.flipud()
+                else:
+                    t.flipud()
+                    t.rotate()
+    return None
 
 
 def parse_data(data: list) -> Dict[int, Tile]:
@@ -133,6 +169,63 @@ def rotate_initial_corner(t: Tile) -> Tile:
     return t
 
 
+def create_image(tiles: Dict[int, Tile]) -> np.array:
+
+    corner_gen = find_corner(tiles)
+    corner = next(corner_gen)
+    corner = rotate_initial_corner(corner)
+
+    ngrid = int(np.sqrt(len(tiles)))
+    img = create_empty_img(tiles, corner, ngrid)
+
+    curr_tile = corner
+    img = put_tile_in_image(img, corner, 0, 0)
+    tiles_grid = {(0, 0): curr_tile}
+
+    for row in range(ngrid):
+        for col in range(ngrid):
+
+            if row == 0 and col == 0:
+                continue
+            if col == 0 and row > 0:
+                go_down = True
+                curr_tile = tiles_grid[(row - 1, col)]  # go down
+            else:
+                go_down = False
+                curr_tile = tiles_grid[(row, col - 1)]  # go right
+
+            # get next tile
+            next_tile = get_next_tile(curr_tile, tiles, go_down)
+
+            # put tile in image
+            if next_tile is not None:
+                img = put_tile_in_image(img, next_tile, row, col)
+            else:
+                print("No next tile found!")
+                break
+
+            # store tile in grid
+            tiles_grid[(row, col)] = next_tile
+
+    return img
+
+
+def create_empty_img(tiles: Dict[int, Tile], corner: Tile, ngrid: int) -> np.array:
+    num_pixels = (len(corner.pixels) - 2) * ngrid
+    img = np.empty(shape=(num_pixels, num_pixels))
+    img[:] = np.nan
+    return img
+
+
+def put_tile_in_image(img: np.array, tile: Tile, row: int, col: int) -> np.array:
+    pixels_to_install = tile.pixels[1:-1, 1:-1]
+    npix = len(pixels_to_install)
+    img[
+        row * npix : (row + 1) * npix, col * npix : (col + 1) * npix
+    ] = pixels_to_install
+    return img
+
+
 def solve_part1(tiles: Dict[int, Tile]) -> int:
     result = 1
     corner = find_corner(tiles)
@@ -144,17 +237,13 @@ def solve_part1(tiles: Dict[int, Tile]) -> int:
 
 if __name__ == "__main__":
 
-    fn = "./data/test_data20.txt"
+    fn = "./data/data20.txt"
     tiles = get_data(fn)
-    ngrid = int(np.sqrt(len(tiles)))
 
-    # result = solve_part1(tiles)
-    # print("solution of part 1:", result)
+    result = solve_part1(tiles)
+    print("solution of part 1:", result)
 
-    corner_gen = find_corner(tiles)
-    corner = next(corner_gen)
-    corner = rotate_initial_corner(corner)
+    img = create_image(tiles)
 
-    img_row = ImageRow(ngrid)
-
-    print(corner.matches)
+    fig = px.imshow(img)
+    fig.show()
