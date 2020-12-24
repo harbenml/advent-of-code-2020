@@ -15,7 +15,7 @@ import plotly.express as px  # type: ignore
 
 
 class Tile(object):
-    def __init__(self, id_: int, pixels: np.array):
+    def __init__(self, id_: int, pixels: np.ndarray):
         self.id = id_
         self.pixels = pixels
         self.matches = [nan] * 4  # [up right down left]
@@ -63,7 +63,7 @@ class Tile(object):
 
 class ImageRow(object):
     def __init__(self, ngrid: int):
-        self.pixels: np.array = np.array([], int)
+        self.pixels: np.ndarray = np.array([], int)
         self.tiles: List[Tile] = []
         self.ngrid = ngrid
 
@@ -169,7 +169,7 @@ def rotate_initial_corner(t: Tile) -> Tile:
     return t
 
 
-def create_image(tiles: Dict[int, Tile]) -> np.array:
+def create_image(tiles: Dict[int, Tile]) -> np.ndarray:
 
     corner_gen = find_corner(tiles)
     corner = next(corner_gen)
@@ -210,14 +210,14 @@ def create_image(tiles: Dict[int, Tile]) -> np.array:
     return img
 
 
-def create_empty_img(tiles: Dict[int, Tile], corner: Tile, ngrid: int) -> np.array:
+def create_empty_img(tiles: Dict[int, Tile], corner: Tile, ngrid: int) -> np.ndarray:
     num_pixels = (len(corner.pixels) - 2) * ngrid
     img = np.empty(shape=(num_pixels, num_pixels))
     img[:] = np.nan
     return img
 
 
-def put_tile_in_image(img: np.array, tile: Tile, row: int, col: int) -> np.array:
+def put_tile_in_image(img: np.ndarray, tile: Tile, row: int, col: int) -> np.ndarray:
     pixels_to_install = tile.pixels[1:-1, 1:-1]
     npix = len(pixels_to_install)
     img[
@@ -226,7 +226,7 @@ def put_tile_in_image(img: np.array, tile: Tile, row: int, col: int) -> np.array
     return img
 
 
-def get_monster_mask() -> np.array:
+def get_monster_mask() -> np.ndarray:
     with open("./data/data20_monster.txt") as f:
         monster = f.read().split("\n")
     mask = [[True if el == "#" else False for el in m] for m in monster]
@@ -234,7 +234,47 @@ def get_monster_mask() -> np.array:
     return mask
 
 
-def solve_part1(tiles: Dict[int, Tile]) -> int:
+def check_is_monster(x: np.ndarray, mask: np.ndarray) -> bool:
+    xm = np.ma.masked_array(x, mask)
+    return sum(xm[xm.mask].data) == sum(mask[mask])
+
+
+def put_monster_in_img(img: np.ndarray, mask: np.ndarray, row: int, col: int):
+    (height, width) = np.shape(mask)
+    img[row : row + height, col : col + width][mask] = 1000
+    return img
+
+
+def search_monsters(img: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    npixels = len(img)
+    (height, width) = np.shape(mask)
+
+    # manipulate test image such that the monster is "visible"
+    img = np.flipud(img)
+    for _ in range(4):
+        for flip in [False, True]:
+
+            for row in range(npixels - height):
+                for col in range(npixels - width):
+
+                    x = img[row : row + height, col : col + width]
+                    is_monster = check_is_monster(x, mask)
+
+                    if is_monster:
+                        print("monster found!")
+                        img = put_monster_in_img(img, mask, row, col)
+
+            if flip:
+                img = np.flipud(img)
+            else:
+                img = np.flipud(img)
+                img = np.rot90(img)
+
+    return img
+
+
+def solve_part1(fn: str) -> int:
+    tiles = get_data(fn)
     result = 1
     corner = find_corner(tiles)
     for _ in range(4):
@@ -243,24 +283,33 @@ def solve_part1(tiles: Dict[int, Tile]) -> int:
     return result
 
 
-if __name__ == "__main__":
-
-    fn = "./data/test_data20.txt"
-    tiles = get_data(fn)
-
-    # result = solve_part1(tiles)
-    # print("solution of part 1:", result)
-
-    img = create_image(tiles)
-
-    mask = get_monster_mask()
-
-    # manipulate test image such that the monster is "visible"
+def show_the_monsters(img: np.ndarray) -> None:
     img = np.rot90(img)
     img = np.flipud(img)
-    x = img[2:5, 2:22]
-    xm = np.ma.masked_array(x, mask)
-    print("is monster?:", sum(xm[xm.mask].data) == sum(mask[mask]))
 
     fig = px.imshow(img)
     fig.show()
+
+
+def solve_part2(fn: str) -> int:
+
+    tiles = get_data(fn)
+    img = create_image(tiles)
+    mask = get_monster_mask()
+    img = search_monsters(img, mask)
+    result = int(sum(img[img == 1]))
+
+    show_the_monsters(img)
+
+    return result
+
+
+if __name__ == "__main__":
+
+    fn = "./data/data20.txt"
+
+    result = solve_part1(fn)
+    print("solution of part 1:", result)
+
+    result2 = solve_part2(fn)
+    print("solution of part 2:", result2)
