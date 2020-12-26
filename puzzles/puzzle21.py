@@ -40,3 +40,22 @@ food_without_allergen = [
     el for food in foods for el in food if el not in foods_with_allergen
 ]
 print(len(food_without_allergen))
+
+
+"""
+Part 2:
+
+'eggs': 'hn',
+'fish': 'dgsdtj',
+'nuts': 'kpksf',
+'peanuts': 'sjcvsr',
+'sesame': 'bstzgn',
+'shellfish': 'kmmqmv',
+'soy': 'vkdxfj',
+'wheat': 'bsfqgb'
+
+Solution:
+
+hn,dgsdtj,kpksf,sjcvsr,bstzgn,kmmqmv,vkdxfj,bsfqgb
+
+"""
