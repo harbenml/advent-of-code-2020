@@ -1,4 +1,3 @@
-from puzzles.puzzle20 import get_data
 from puzzles.puzzle20 import solve_part1
 from puzzles.puzzle20 import solve_part2
 

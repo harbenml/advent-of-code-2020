@@ -53,7 +53,7 @@ def get_str_of_identified(identified: Dict[str, str]) -> str:
     return ",".join(ing)
 
 
-def solve_part1(fn: str) -> int:
+def solve_part1(fn: str) -> Tuple[int, Dict[str, str]]:
     foods, allergs = get_data(fn)
     d = create_dict(foods, allergs)
     identified = identify_ingredients_with_allergens(d)
