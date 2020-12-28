@@ -19,23 +19,28 @@ def get_data(fn: str) -> Tuple[Deque, Deque]:
     return p1, p2
 
 
+def calc_score(p: Deque) -> int:
+    return sum([(i + 1) * el for i, el in enumerate(list(p)[::-1])])
+
+
+def play_next_round(p1: Deque, p2: Deque) -> Tuple[Deque, Deque]:
+    c1, c2 = p1.popleft(), p2.popleft()
+    if c1 > c2:
+        p1.extend([c1, c2])
+    else:
+        p2.extend([c2, c1])
+    return p1, p2
+
+
 def play_game(p1: Deque, p2: Deque) -> int:
     while True:
-        c1, c2 = p1.popleft(), p2.popleft()
-        if c1 > c2:
-            p1.append(c1)
-            p1.append(c2)
-        else:
-            p2.append(c2)
-            p2.append(c1)
+        p1, p2 = play_next_round(p1, p2)
         if not p1 or not p2:
             print("game finished.")
             if not p2:
-                return sum([(i + 1) * el for i, el in enumerate(list(p1)[::-1])])
+                return calc_score(p1)
             else:
-                return sum([(i + 1) * el for i, el in enumerate(list(p2)[::-1])])
-
-    return -1
+                return calc_score(p2)
 
 
 def solve_part1(fn: str):
