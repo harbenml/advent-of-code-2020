@@ -1,5 +1,6 @@
 from typing import List, Tuple, Union, Deque, Iterable, Dict
 from collections import deque
+from tqdm import tqdm
 
 
 class Node:
@@ -22,6 +23,7 @@ class CircularLinkedList:
             self.nodes[value] = node
         node.next = self.head
         self.nodes[self.head.value] = self.head
+        self.maxval = max(data)
 
     def traverse(self, start: Union[int, None] = None) -> Iterable:
         if start is not None:
@@ -60,10 +62,10 @@ class CircularLinkedList:
         self.head.next = self.nodes[nodes[2]].next
 
         # find destination
-        dest = self.head.value - 1 if self.head.value != 1 else 9
+        dest = self.head.value - 1 if self.head.value != 1 else self.maxval
         while dest in nodes:
             if dest == 1:
-                dest = 9
+                dest = self.maxval
             else:
                 dest -= 1
 
@@ -90,4 +92,16 @@ cll = CircularLinkedList(data=input)
 for _ in range(100):
     cll.pick_up()
 cll.print_solution_str()
+
+input = deque([3, 1, 8, 9, 4, 6, 5, 7, 2])
+# input = deque([3, 8, 9, 1, 2, 5, 4, 6, 7])
+input = input + deque(range(max(input) + 1, 1_000_001))
+cll = CircularLinkedList(data=input)
+# for _ in range(10_000_000):
+for i in tqdm(range(10_000_000)):
+    cll.pick_up()
+
+n1 = cll.nodes[1].next
+n2 = cll.nodes[n1.value].next
+print("solution of part 2:", n1.value * n2.value)
 
