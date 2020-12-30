@@ -1,6 +1,12 @@
 from typing import List, Tuple, Union, Deque, Iterable, Dict
 from collections import deque
-from tqdm import tqdm
+from tqdm import tqdm  # type: ignore
+
+
+def get_data(fn: str) -> Deque[int]:
+    with open(fn) as f:
+        data = f.read()
+    return deque([int(el) for el in data])
 
 
 class Node:
@@ -25,7 +31,7 @@ class CircularLinkedList:
         self.nodes[self.head.value] = self.head
         self.maxval = max(data)
 
-    def traverse(self, start: Union[int, None] = None) -> Iterable:
+    def traverse(self, start: Union[int, None] = None) -> Iterable[Node]:
         if start is not None:
             start_node = self.nodes[start]
         else:
@@ -42,13 +48,13 @@ class CircularLinkedList:
             nodes.append(str(node))
         print(" -> ".join(nodes))
 
-    def print_solution_str(self):
+    def get_solution_str(self) -> str:
         nodes = []
         iter_node = self.traverse(1)
         _ = next(iter_node)
         for node in iter_node:
             nodes.append(str(node))
-        print("".join(nodes))
+        return "".join(nodes)
 
     def pick_up(self):
         iter_node = self.traverse(self.head.value)
@@ -77,31 +83,33 @@ class CircularLinkedList:
         # set new head
         self.head = self.head.next
 
-        # self.print_list()
-        # print("hi")
+
+def solve_part1(fn: str) -> int:
+    input = get_data(fn)
+    cll = CircularLinkedList(data=input)
+    for _ in range(100):
+        cll.pick_up()
+    return int(cll.get_solution_str())
 
 
-input = deque([3, 8, 9, 1, 2, 5, 4, 6, 7])
-cll = CircularLinkedList(data=input)
-for _ in range(10):
-    cll.pick_up()
-cll.print_solution_str()
+def solve_part2(fn: str) -> int:
+    input = get_data(fn)
+    input = input + deque(range(max(input) + 1, 1_000_001))
+    cll = CircularLinkedList(data=input)
+    for _ in tqdm(range(10_000_000)):
+        cll.pick_up()
 
-input = deque([3, 1, 8, 9, 4, 6, 5, 7, 2])
-cll = CircularLinkedList(data=input)
-for _ in range(100):
-    cll.pick_up()
-cll.print_solution_str()
+    n1 = cll.nodes[1].next
+    n2 = cll.nodes[n1.value].next
+    return n1.value * n2.value
 
-input = deque([3, 1, 8, 9, 4, 6, 5, 7, 2])
-# input = deque([3, 8, 9, 1, 2, 5, 4, 6, 7])
-input = input + deque(range(max(input) + 1, 1_000_001))
-cll = CircularLinkedList(data=input)
-# for _ in range(10_000_000):
-for i in tqdm(range(10_000_000)):
-    cll.pick_up()
 
-n1 = cll.nodes[1].next
-n2 = cll.nodes[n1.value].next
-print("solution of part 2:", n1.value * n2.value)
+if __name__ == "__main__":
 
+    fn = "./data/test_data23.txt"
+
+    ans = solve_part1(fn)
+    print("solution of part 1:", ans)
+
+    ans2 = solve_part2(fn)
+    print("solution of part 2:", ans2)
