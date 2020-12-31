@@ -7,10 +7,10 @@
        (-1,-1) sw   se (1,-1)
 
 """
-from typing import Callable, Iterable, List, NamedTuple, Generator
+from typing import Callable, Iterable, List, NamedTuple, Generator, Tuple, cast
 
 
-def parse(line: str) -> List:
+def parse(line: str) -> List[str]:
     instructions = []
     while line:
         if line[:2] in ("se", "sw", "nw", "ne"):
@@ -45,13 +45,24 @@ def move_fun(direction: str) -> Callable:
     return lambda x, y: (x, y)
 
 
-data = get_data("./data/test_data24.txt")
-data = [parse(line) for line in data]
+def find_tile(instructions: List[str]) -> Tuple[int, int]:
+    t = (0, 0)
+    for move in map(move_fun, instructions):
+        t = move(*t)
+    return t
 
-print(data)
+
+data = get_data("./data/data24.txt")
+# data = cast(List[str], [parse(line) for line in data])
+black_tiles = []
+for line in data:
+    instructions = parse(line)
+    tile = find_tile(instructions)
+    if tile not in black_tiles:
+        black_tiles.append(tile)
+    else:
+        black_tiles.remove(tile)
 
 
-# t = (0, 0)
-# d = ["nw", "w", "sw", "e", "e"]
-# for move in map(move_fun, ["e", "se", "w"]):
-#     t = move(*t)
+print(len(black_tiles))
+
