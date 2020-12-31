@@ -7,7 +7,18 @@
        (-1,-1) sw   se (1,-1)
 
 """
-from typing import Callable, Iterable, List, NamedTuple, Generator, Tuple, cast
+from typing import (
+    Callable,
+    Iterable,
+    List,
+    NamedTuple,
+    Generator,
+    Optional,
+    Set,
+    Tuple,
+    cast,
+)
+from collections import Counter
 
 
 def parse(line: str) -> List[str]:
@@ -45,8 +56,7 @@ def move_fun(direction: str) -> Callable:
     return lambda x, y: (x, y)
 
 
-def find_tile(instructions: List[str]) -> Tuple[int, int]:
-    t = (0, 0)
+def find_tile(instructions: List[str], t: Tuple[int, int] = (0, 0)) -> Tuple[int, int]:
     for move in map(move_fun, instructions):
         t = move(*t)
     return t
@@ -54,15 +64,44 @@ def find_tile(instructions: List[str]) -> Tuple[int, int]:
 
 data = get_data("./data/data24.txt")
 # data = cast(List[str], [parse(line) for line in data])
-black_tiles = []
+black_tiles = set()
 for line in data:
     instructions = parse(line)
     tile = find_tile(instructions)
     if tile not in black_tiles:
-        black_tiles.append(tile)
+        black_tiles.add(tile)
     else:
         black_tiles.remove(tile)
 
 
+print(len(black_tiles))
+
+
+def get_neighbors(
+    tile: Tuple[int, int], black_tiles: List[Tuple[int, int]], neighbor_counts: Counter
+) -> Counter:
+
+    for move in map(move_fun, ["e", "se", "sw", "w", "nw", "ne"]):
+        neighbor = move(*tile)
+        neighbor_counts[neighbor] += 1
+    return neighbor_counts
+
+
+def flip_one_cycle(black_tiles: Set[Tuple[int, int]]) -> Set[Tuple[int, int]]:
+    neighbor_counts = Counter()
+    for tile in black_tiles:
+        neighbor_counts = get_neighbors(tile, black_tiles, neighbor_counts)
+
+    new_black_tiles: Set[Tuple[int, int]] = set()
+    for neighbor, count in neighbor_counts.items():
+        if (neighbor in black_tiles and 1 <= count <= 2) or (
+            neighbor not in black_tiles and count == 2
+        ):
+            new_black_tiles.add(neighbor)
+    return new_black_tiles
+
+
+for _ in range(100):
+    black_tiles = flip_one_cycle(black_tiles)
 print(len(black_tiles))
 
