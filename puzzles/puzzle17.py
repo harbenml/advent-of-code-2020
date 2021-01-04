@@ -23,7 +23,7 @@ def get_data(filename: str, dimension: int):
 
 
 def simulate_one_cycle(active: list, dimension: int) -> list:
-    neighbors = defaultdict(lambda: 0)
+    neighbors: dict = defaultdict(lambda: 0)
     active_new = []
     for cube in active:
         for diff in product([-1, 0, 1], repeat=dimension):

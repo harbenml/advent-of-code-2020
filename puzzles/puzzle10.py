@@ -1,5 +1,7 @@
-import numpy as np
-import pandas as pd
+from typing import Dict
+
+import numpy as np  # type: ignore
+import pandas as pd  # type: ignore
 
 
 def load_data(filename: str) -> np.array:
@@ -17,7 +19,7 @@ def solve_part_1(X: np.array) -> int:
 
 def solve_part_2(X: np.array) -> int:
     # memoization
-    memo = {}
+    memo: Dict[int, int] = {}
     # Dynamic Programming
     def dp(i):
         if i == len(X) - 1:

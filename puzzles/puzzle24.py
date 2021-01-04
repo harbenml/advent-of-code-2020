@@ -62,23 +62,20 @@ def find_tile(instructions: List[str], t: Tuple[int, int] = (0, 0)) -> Tuple[int
     return t
 
 
-data = get_data("./data/data24.txt")
-# data = cast(List[str], [parse(line) for line in data])
-black_tiles = set()
-for line in data:
-    instructions = parse(line)
-    tile = find_tile(instructions)
-    if tile not in black_tiles:
-        black_tiles.add(tile)
-    else:
-        black_tiles.remove(tile)
-
-
-print(len(black_tiles))
+def solve_part1(data: List[str]) -> Set[Tuple[int, int]]:
+    black_tiles = set()
+    for line in data:
+        instructions = parse(line)
+        tile = find_tile(instructions)
+        if tile not in black_tiles:
+            black_tiles.add(tile)
+        else:
+            black_tiles.remove(tile)
+    return black_tiles
 
 
 def get_neighbors(
-    tile: Tuple[int, int], black_tiles: List[Tuple[int, int]], neighbor_counts: Counter
+    tile: Tuple[int, int], black_tiles: Set[Tuple[int, int]], neighbor_counts: Counter
 ) -> Counter:
 
     for move in map(move_fun, ["e", "se", "sw", "w", "nw", "ne"]):
@@ -88,7 +85,7 @@ def get_neighbors(
 
 
 def flip_one_cycle(black_tiles: Set[Tuple[int, int]]) -> Set[Tuple[int, int]]:
-    neighbor_counts = Counter()
+    neighbor_counts: Counter = Counter()
     for tile in black_tiles:
         neighbor_counts = get_neighbors(tile, black_tiles, neighbor_counts)
 
@@ -101,7 +98,19 @@ def flip_one_cycle(black_tiles: Set[Tuple[int, int]]) -> Set[Tuple[int, int]]:
     return new_black_tiles
 
 
-for _ in range(100):
-    black_tiles = flip_one_cycle(black_tiles)
-print(len(black_tiles))
+def solve_part2(black_tiles: Set[Tuple[int, int]]) -> int:
+    for _ in range(100):
+        black_tiles = flip_one_cycle(black_tiles)
+    return len(black_tiles)
+
+
+if __name__ == "__main__":
+
+    data = get_data("./data/test_data24.txt")
+
+    black_tiles = solve_part1(data)
+    print(len(black_tiles))
+
+    num_black_tiles = solve_part2(black_tiles)
+    print(num_black_tiles)
 

@@ -35,6 +35,7 @@ def check_values(enc: Encoder, nums_to_check: list) -> int:
             enc.add_to_buffer(num)
         else:
             return num
+    return -1
 
 
 if __name__ == "__main__":

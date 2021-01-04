@@ -8,7 +8,7 @@ def load_data(filename: str) -> list:
 
 
 def parse_input(X: list) -> dict:
-    d = {}
+    d: dict = {}
     for x in X:
         outer = x.split(" contain ")[0].split(" ")
         outer = outer[0] + " " + outer[1]

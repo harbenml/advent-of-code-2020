@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as np  # type: ignore
 from typing import List, Tuple, Dict
 import re
 
@@ -9,7 +9,7 @@ def load_data(filename: str) -> List:
     return X
 
 
-def preprocess_data(X: List) -> List:
+def preprocess_data(X: List) -> List[Dict]:
     # remove \n at end of line
     X = [x.strip() for x in X]
     # split at whitespaces
@@ -19,7 +19,7 @@ def preprocess_data(X: List) -> List:
     return field_dict
 
 
-def collect_dict(X: List) -> Dict:
+def collect_dict(X: List) -> List[Dict]:
     fields = []
     field = {}
     for el in X:
@@ -77,6 +77,7 @@ def check_value(field: str, value: str) -> bool:
         return len(value) == 9 and value.isdigit()
     if field == "cid":
         return True
+    return False
 
 
 def check_values(passport: dict) -> bool:
@@ -84,7 +85,7 @@ def check_values(passport: dict) -> bool:
     return all(results)
 
 
-def get_no_valid_passports(filename: str) -> int:
+def get_no_valid_passports(filename: str) -> Tuple[int, int]:
     X = load_data(filename)
     passports = preprocess_data(X)
     no_valid_passports = 0

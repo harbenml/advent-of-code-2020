@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as np  # type: ignore
 
 
 def load_data(filename: str) -> np.array:

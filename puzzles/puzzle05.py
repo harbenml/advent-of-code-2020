@@ -1,5 +1,5 @@
 from typing import Tuple, List
-import numpy as np
+import numpy as np  # type: ignore
 
 
 def load_passes():
@@ -32,7 +32,7 @@ def get_seat_id(row: int, col: int) -> int:
     return row * 8 + col
 
 
-def parse_boarding_pass(s: str) -> Tuple[int, int, int]:
+def parse_boarding_pass(s: str) -> int:
     row = get_row(s[:-3])
     col = get_col(s[-3:])
     seat_id = get_seat_id(row, col)
