@@ -3,3 +3,5 @@
 .DS_Store
 *.ipynb
 .vscode/
+puzzles/puzzle19_*
+.coverage.*
